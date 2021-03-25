@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<div class="container-fluid padding ">
+	<div class="row welcome contact-us-message">
+		<div class="col-12">
+			<h1 class="display-4 text-center">About:</h1>
+		</div>
+		<hr>
+		<div class="col-12">
+			<p class="lead" id="">This website displays statistics from FaceitAPI using FaceitApiV4 from developers.faceit.com <br>
+			The source code can be found here: <br><br>
+			Message: anactualfox#5583 for inquiries, requesting new features, bugs or help <br><br>
+			Notes: I probably won't include statistics from steam due to the fact that there are several websites that do this really well<br>
+			I also have an open source discord bot that does faceit stats with some documentation (and some other things) and graphs them in Python it's available here: <br><br>
+			Special thanks to: Kelzorz & Jraff for helping me during development. <br> 
+			</p>
+
+		</div>
+	</div>
+<div class="row welcome contact-us-message">
+	<div class="col-12">
+		<h1 class="display-4 text-center">Upcoming Features:</h1>
+	</div>
+	<hr>
+	<div class="col-12">
+		<li class="lead" id="">Search by steam username</li>
+		<li class="lead" id="">Search by steam URL</li>
+		<p></p>
+
+	</div>
+</div>
+</div>
+
+{% include 'footer.html'%}
+{% endblock content %}

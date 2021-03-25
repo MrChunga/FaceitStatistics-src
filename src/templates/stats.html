@@ -1,0 +1,281 @@
+{% extends 'base.html' %}
+{% load static %}
+<script>
+
+{% block jquery %}
+
+const data = JSON.parse(document.getElementById('data').textContent);
+var defaultData = [];
+var labels = [];
+
+labels = data["labels"];
+defaultData = data["default"];
+kd_history = data["kd_history"];
+setChart();
+
+function setChart(){
+    var ctx3 = document.getElementById("myChart");
+    var ctx1 = document.getElementById("myChart1");
+
+    var myChart = new Chart(ctx3, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Elo',
+            data: defaultData,
+            backgroundColor: [
+                'rgba(247,23,23,0.1)',
+            ],
+            borderColor: [
+                'rgba(247,23,23,1)',
+            ],
+            borderWidth: 1,
+            pointRadius: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false
+                }
+            }]
+        }
+    }
+});
+
+    var myChart = new Chart(ctx1, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'K/D',
+            data: kd_history,
+            backgroundColor: [
+                'rgba(207,23,23,0.1)',
+            ],
+            borderColor: [
+                'rgba(207,23,23,1)',
+            ],
+            borderWidth: 1,
+            pointRadius: 0,
+        }]
+    },
+    options: {
+        responsive: true,
+        scales: {
+            yAxes: [{
+                ticks: {
+                    beginAtZero:false
+                }
+            }]
+        }
+    }
+});    
+}
+
+
+{% endblock %}
+
+</script>
+
+{% block content %}
+
+<div class="container-fluid">
+<div class ="">
+    <a>{{ data|json_script:"data" }}</a>
+</div>
+<div class="container-fluid py-2">
+    <div class="row row-cols-1 row-cols-md-3 g-4">
+      <div class="col">
+        <div class="card h-100 w-100 ">
+          <img src="..." class="card-img-top " alt="">
+          <div class="card-body">
+            <p>
+                <h1 class="card-title text-center">{{ data.get_player_id.nickname }}<img src="{{ data.current_skill_level }}" class="faceit-rank"></h1>
+                <a class="card-text text-center"></a>
+            </p>
+          </div>
+          <div class="card-footer">
+            <small class="text-muted"></small>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+<div class="container-fluid padding ">
+    <div class="">
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+          <div class="col-sm-4 col-xs-12">
+            <div class="card h-100 w-100">
+              <img src="..." class="card-img-top " alt="">
+              <div class="card-body">
+                <h1 class="card-title text-center">Lifetime K/D</h1>
+                <h2 class="card-text text-center">{{ data.lifetime_kd }}</h2>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted card-footer-text">Last 20 Games: {{ data.kd_history_last_20 }}</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 col-xs-12">
+            <div class="card h-100 w-100">
+              <img src="..." class="card-img-top" alt="">
+              <div class="card-body">
+                <h1 class="card-title text-center">Lifetime KPR</h1>
+                <h2 class="card-text text-center">{{ data.KPR }}</h2>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted card-footer-text">Last 20 Games: {{ data.KPR_last_20 }}</small>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-4 col-xs-12">
+            <div class="card h-100 w-100">
+              <img src="..." class="card-img-top" alt="">
+              <div class="card-body">
+                <h1 class="card-title text-center">Current Elo</h1>
+                <h2 class="card-text text-center">{{ data.current_elo }}</h2>
+              </div>
+              <div class="card-footer">
+                <small class="text-muted card-footer-text">Progression: {{data.current_elo}} / {{data.current_progress}} </small>
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid py-2">
+    <div class="container-fluid">
+        <div class='row'>
+            <div class='col graph mb-2'>
+                <canvas id="myChart" width="" height="250"></canvas>
+            </div>
+            <div class="graph-padding">
+            </div>
+            <div class='col graph mb-2'>
+                <canvas id="myChart1" width="" height="250"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <button class="col btn-block btn-dark btn-styles" data-toggle="collapse" data-target="#match_history">Match History</button>
+    <div id="match_history" class="collapse">
+    <div class="">
+    <div class="row text-center">
+        <div class="col">
+            <table class="table table-styles table-hover table-striped table-dark">
+              <thead>
+                <tr>
+                  <th scope="col">Result</th>
+                  <th scope="col">Score</th>
+                  <th scope="col">KDA</th>
+                  <th scope="col">K/D</th>
+                  <th scope="col">KPR</th>
+                  <th scope="col">Map</th>
+                  <th scope="col">Time Ago</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.0 }}</th>
+                  <td>{{ data.total_scores_last_20.0 }}</td>
+                  <td>{{ data.total_kills_last_20.19 }}-{{ data.total_assists_last_20.0 }}-{{ data.total_deaths_last_20.0 }}</td>
+                  <td>{{ data.total_kds_last_20.0}}</td>
+                  <td>{{ data.total_kprs_last_20.0 }}</td> 
+                  <td>{{ data.total_maps_last_20.0 }}</td>
+                  <td>{{ data.total_dates_last_20.0 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.1}}</th>
+                  <td>{{ data.total_scores_last_20.1 }}</td>
+                  <td>{{ data.total_kills_last_20.18 }}-{{ data.total_assists_last_20.1 }}-{{ data.total_deaths_last_20.1 }}</td>
+                  <td>{{ data.total_kds_last_20.1}}</td>
+                  <td>{{ data.total_kprs_last_20.1 }}</td> 
+                  <td>{{ data.total_maps_last_20.1 }}</td>
+                  <td>{{ data.total_dates_last_20.1 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.2 }}</th>
+                  <td>{{ data.total_scores_last_20.2 }}</td>
+                  <td>{{ data.total_kills_last_20.17 }}-{{ data.total_assists_last_20.2 }}-{{ data.total_deaths_last_20.2 }}</td>
+                  <td>{{ data.total_kds_last_20.2}}</td>
+                  <td>{{ data.total_kprs_last_20.2 }}</td> 
+                  <td>{{ data.total_maps_last_20.2 }}</td>
+                  <td>{{ data.total_dates_last_20.2 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.3 }}</th>
+                  <td>{{ data.total_scores_last_20.3 }}</td>
+                  <td>{{ data.total_kills_last_20.16 }}-{{ data.total_assists_last_20.3 }}-{{ data.total_deaths_last_20.3 }}</td>
+                  <td>{{ data.total_kds_last_20.3}}</td>
+                  <td>{{ data.total_kprs_last_20.3 }}</td> 
+                  <td>{{ data.total_maps_last_20.3 }}</td>
+                  <td>{{ data.total_dates_last_20.3 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.4 }}</th>
+                  <td>{{ data.total_scores_last_20.4 }}</td>
+                  <td>{{ data.total_kills_last_20.15 }}-{{ data.total_assists_last_20.4 }}-{{ data.total_deaths_last_20.4 }}</td>
+                  <td>{{ data.total_kds_last_20.4}}</td>
+                  <td>{{ data.total_kprs_last_20.4 }}</td> 
+                  <td>{{ data.total_maps_last_20.4 }}</td>
+                  <td>{{ data.total_dates_last_20.4 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.5 }}</th>
+                  <td>{{ data.total_scores_last_20.5 }}</td>
+                  <td>{{ data.total_kills_last_20.14 }}-{{ data.total_assists_last_20.5 }}-{{ data.total_deaths_last_20.5 }}</td>
+                  <td>{{ data.total_kds_last_20.5}}</td>
+                  <td>{{ data.total_kprs_last_20.5 }}</td> 
+                  <td>{{ data.total_maps_last_20.5 }}</td>
+                  <td>{{ data.total_dates_last_20.5 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.6 }}</th>
+                  <td>{{ data.total_scores_last_20.6 }}</td>
+                  <td>{{ data.total_kills_last_20.13 }}-{{ data.total_assists_last_20.6 }}-{{ data.total_deaths_last_20.6 }}</td>
+                  <td>{{ data.total_kds_last_20.6}}</td>
+                  <td>{{ data.total_kprs_last_20.6 }}</td> 
+                  <td>{{ data.total_maps_last_20.6 }}</td>
+                  <td>{{ data.total_dates_last_20.6 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.7 }}</th>
+                  <td>{{ data.total_scores_last_20.7 }}</td>
+                  <td>{{ data.total_kills_last_20.12 }}-{{ data.total_assists_last_20.7 }}-{{ data.total_deaths_last_20.7 }}</td>
+                  <td>{{ data.total_kds_last_20.7}}</td>
+                  <td>{{ data.total_kprs_last_20.7 }}</td> 
+                  <td>{{ data.total_maps_last_20.7 }}</td>
+                  <td>{{ data.total_dates_last_20.7 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.8 }}</th>
+                  <td>{{ data.total_scores_last_20.8 }}</td>
+                  <td>{{ data.total_kills_last_20.11 }}-{{ data.total_assists_last_20.8 }}-{{ data.total_deaths_last_20.8 }}</td>
+                  <td>{{ data.total_kds_last_20.8}}</td>
+                  <td>{{ data.total_kprs_last_20.8 }}</td> 
+                  <td>{{ data.total_maps_last_20.8 }}</td>
+                  <td>{{ data.total_dates_last_20.8 }}</td>
+                </tr>
+                <tr>
+                  <th scope="row">{{ data.total_match_results_last_20.9 }}</th>
+                  <td>{{ data.total_scores_last_20.9 }}</td>
+                  <td>{{ data.total_kills_last_20.10 }}-{{ data.total_assists_last_20.9 }}-{{ data.total_deaths_last_20.9 }}</td>
+                  <td>{{ data.total_kds_last_20.9}}</td>
+                  <td>{{ data.total_kprs_last_20.9 }}</td> 
+                  <td>{{ data.total_maps_last_20.9 }}</td>
+                  <td>{{ data.total_dates_last_20.9 }}</td>
+                </tr>
+              </tbody>
+            </table>
+        </div>
+    </div>
+    </div>
+    </div>
+</div>
+</div>
+{% endblock content %}
